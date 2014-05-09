@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600,400);
+      Crafty.canvas.init();
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.scene("game_over", function() {
+        Crafty.e("2D, Canvas, Color, Text")
+          .color('rgb(0,255,0)')
+          .attr({ x: 200, y: 100, w: 200, h: 10 })
+          .text("Game over")
+          .textFont({ size: "20pt" })
+      });
+
+      Crafty.scene("ping_pong", function() {
+
+        Crafty.e("Paddle, 2D, Canvas, Color, Multiway")
+          .color('rgb(0,255,0)')
+          .attr({ x: 200, y: 380, w: 100, h: 10 })
+          .multiway(5, { A: 180, D: 0 });
+
+        Crafty.e("Box1, 2D, Canvas, Color, Collision")
+          .color('rgb(255,0,0)')
+        .attr({ x: 200, y: 100, w: 10, h: 10, dX: 4, dY: -4 })
+        .bind('EnterFrame', function () {
+
+          if (this.y <= 20) {
+            this.dY *= -1;
+          }
+
+          if (this.x <= 10 || this.x >= 590) {
+            this.dX *= -1;
+          }
+
+          if (this.y >= 390) {
+            console.log("you lost")
+            Crafty.enterScene("game_over");
+          }
+
+          this.x += this.dX;
+          this.y += this.dY;
+        })
+        .onHit('Paddle', function () {
+          this.dY *= -1;
+        });
+
+      });
+
+      Crafty.enterScene("ping_pong");
+    </script>
+  </body>
+</html>
