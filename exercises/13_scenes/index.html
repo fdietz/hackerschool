@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      var width = 600;
+      var height= 300;
+
+      Crafty.init(width, height);
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.scene("first", function() {
+        Crafty.e("2D, Text, Canvas, Mouse, Keyboard")
+          .textColor('rgb(255,0,0)')
+          .attr({ x: 100, y: 50 })
+          .textFont({ size: '20px', weight: 'bold' })
+          .text("Press me to change to next scene")
+          .bind("Click", function() {
+            Crafty.enterScene("second");
+          })
+          .bind("KeyDown", function() {
+            Crafty.enterScene("second");
+          });
+      });
+
+      Crafty.scene("second", function() {
+        Crafty.e("2D, Text, Canvas, Mouse, Keyboard")
+          .textColor('rgb(255,0,0)')
+          .attr({ x: 100, y: 50 })
+          .textFont({ size: '20px', weight: 'bold' })
+          .text("Press me to change back")
+          .bind("Click", function() {
+            Crafty.enterScene("first");
+          })
+          .bind("KeyDown", function() {
+            Crafty.enterScene("first");
+          });
+      });
+
+      Crafty.enterScene("first");
+    </script>
+  </body>
+</html>
