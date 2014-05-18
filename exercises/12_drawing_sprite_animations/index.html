@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600,400);
+      Crafty.background('white');
+
+      Crafty.sprite(26, "images/sprites2.png", {
+        spinner : [0, 0],
+      });
+
+      Crafty.e("2D, Canvas, spinner, SpriteAnimation")
+        // .attr({ x: 40, y: 120 })
+        .reel("anim", 1000, [[0, 1], [0, 2], [0, 3], [0, 4]]);
+
+    </script>
+  </body>
+</html>

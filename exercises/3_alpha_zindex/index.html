@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600, 300);
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.e("Box1, 2D, DOM, Color")
+        .color('rgb(255,0,0)')
+      .attr({ x: 200, y: 100, w: 100, h: 100, z: 2, alpha: 0.5 });
+
+      Crafty.e("Box2, 2D, DOM, Color")
+        .color('rgb(0,255,0)')
+      .attr({ x: 250, y: 150, w: 100, h: 100, z: 1 });
+
+      Crafty.e("2D, Text, DOM, Color")
+        .color('rgb(255,0,0)')
+          .attr({ x: 100, y: 50, w: 600 })
+          .textFont({ size: '20px', weight: 'bold' })
+          .text("alpha transparenz und z-index");
+    </script>
+  </body>
+</html>

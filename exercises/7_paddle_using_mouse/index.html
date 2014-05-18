@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <style>
+      * {cursor: none;}
+    </style>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      var width = 600;
+      var height = 300;
+
+      Crafty.init(width, height);
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.e("Paddle, 2D, Canvas, Color")
+        .color('rgb(0,255,0)')
+        .attr({ x: 300, y: 280, w: 100, h: 10 });
+
+      Crafty.e("mouseTracking, 2D, Mouse, Canvas")
+        .attr({ w: width , h: height, x:0, y:0 })
+        .bind("MouseMove", function(e) {
+          console.log("Mouse moved:" + Crafty.mousePos.x + ", " + Crafty.mousePos.y);
+
+          var paddle = Crafty("Paddle");
+          paddle.x = Crafty.mousePos.x;
+        });
+    </script>
+  </body>
+</html>

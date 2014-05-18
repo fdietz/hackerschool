@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600,400);
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.sprite(40, 40, "images/sprites.png", {
+        box1 : [ 0, 0 ],
+        box2 : [ 1, 0 ],
+        box3 : [ 2, 0 ],
+        box4 : [ 4, 3 ],
+      });
+
+      Crafty.e("2D, Canvas, box1")
+        .attr({ x: 40, y: 40 });
+
+      Crafty.e("2D, Canvas, box2")
+        .attr({ x: 80, y: 40 });
+
+      Crafty.e("2D, Canvas, box3")
+        .attr({ x: 120, y: 40 });
+
+      Crafty.e("2D, Canvas, box4")
+        .attr({ x: 40, y: 80 });
+    </script>
+  </body>
+</html>

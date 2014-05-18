@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600, 300);
+      Crafty.background('rgb(127,127,127)');
+
+      Crafty.e("Paddle, 2D, DOM, Color, Multiway")
+        .color('rgb(0,255,0)')
+        .attr({ x: 300, y: 280, w: 100, h: 10 })
+        .multiway(4, { LEFT_ARROW: 180, RIGHT_ARROW: 0 });
+
+    </script>
+  </body>
+</html>

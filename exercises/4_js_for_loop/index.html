@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      Crafty.init(600, 300);
+      Crafty.background('rgb(127,127,127)');
+
+      for (var i=0; i<10; i++) {
+        Crafty.e("Box1, 2D, DOM, Color")
+          .color('rgb(255,0,0)')
+          .attr({ x: 100 + i*30, y: 100, w: 20, h: 20 });
+      }
+
+    </script>
+  </body>
+</html>
