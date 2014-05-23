@@ -1,0 +1,207 @@
+<html>
+  <head>
+    <style>
+      #cr-stage {
+        cursor: none;
+      }
+    </style>
+    <script type="text/javascript" src="js/crafty-min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      var width = 640;
+      var height = 480;
+      var remainingLives = 3;
+      Crafty.init(width, height);
+      Crafty.canvas.init();
+
+      Crafty.load(["images/bg.png"], function(){
+        Crafty.background("url('images/bg.png')");
+      });
+      // Crafty.background('rgb(0,0,0)');
+
+      Crafty.audio.add("bounce", "audio/bounce.wav");
+      Crafty.audio.add("brickDeath", "audio/brickDeath.wav");
+      Crafty.audio.add("powerdown", "audio/powerdown.wav");
+      Crafty.audio.add("powerup", "audio/powerup.wav");
+      Crafty.audio.add("recover", "audio/recover.wav");
+
+      Crafty.scene("game_over", function() {
+        Crafty.e("2D, Canvas, Color, Text")
+          .color('rgb(0,255,0)')
+          .attr({ x: 200, y: 100, w: 200, h: 10 })
+          .text("Game over")
+          .textFont({ size: "20pt" })
+      });
+
+      Crafty.scene("you_won", function() {
+        Crafty.e("2D, Canvas, Color, Text")
+          .color('rgb(0,255,0)')
+          .attr({ x: 200, y: 100, w: 200, h: 10 })
+          .text("You won")
+          .textFont({ size: "20pt" })
+      });
+
+      Crafty.scene("ping_pong", function() {
+        var max = 7;
+        var rowCount = 5;
+        var colCount = 12;
+        var startX = 100;
+        var startY = 50;
+        var paddleWidth = 120;
+        var paddleHeight = 40;
+        var brickWidth = 30;
+        var brickHeight = 30;
+        var ballWidth = 24;
+        var ballHeight = 24;
+        var pause = false;
+
+        Crafty.sprite("images/sprites.png", {
+          paddle : [ 0, 240, paddleWidth, paddleHeight ],
+          ball : [ 160, 240, ballWidth, ballHeight ],
+        });
+
+        Crafty.sprite(40, "images/sprites2.png", {
+          brick1 : [0, 0],
+          brick2 : [1, 0],
+          brick3 : [2, 0],
+          brick4 : [3, 0],
+          brick5 : [4, 0],
+          brick6 : [5, 0],
+          brick7 : [6, 0],
+          brickStar : [7, 0],
+          brickFire : [4, 3],
+        });
+
+        var randXStar = Crafty.math.randomInt(1, rowCount-1);
+        var randYStar = Crafty.math.randomInt(1, colCount-1);
+        var randXFire = Crafty.math.randomInt(1, rowCount-1);
+        var randYFire = Crafty.math.randomInt(1, colCount-1);
+
+        for (var row=0; row<rowCount; row++) {
+          for (var col=0; col<colCount; col++) {
+            rand = Crafty.math.randomInt(1, max-1);
+            if (col === randYStar && row === randXStar) {
+              Crafty.e("Brick, Canvas, 2D")
+                .requires("brickStar")
+                .attr({ x: col*(brickWidth+5) + startX, y: row*(brickHeight+5) + startY });
+            } else if (col === randYFire && row === randXFire) {
+              Crafty.e("Brick, Canvas, 2D")
+                .requires("brickFire")
+                .attr({ x: col*(brickWidth+5) + startX, y: row*(brickHeight+5) + startY });
+            } else {
+              Crafty.e("Brick, Canvas, 2D")
+                .requires("brick" + rand)
+                .attr({ x: col*(brickWidth+5) + startX, y: row*(brickHeight+5) + startY });
+            }
+
+          }
+        }
+
+        Crafty.e("Paddle, 2D, Canvas, paddle")
+          .attr({ x: 200, y: height-30-1, speed: 5, direction: 1 })
+          .bind("EnterFrame", function() {
+            if (this.moving) {
+              this.x = this.x + this.speed * this.direction;
+              if (this.x < 0) {
+                this.x = 0;
+              }
+              if (this.x + this.w > width) {
+                this.x = width - this.w;
+              }
+            }
+          });
+
+        Crafty.e("mouseTracking, 2D, Mouse, Canvas")
+          .attr({ w: width , h: height, x:0, y:0 })
+          .bind("MouseMove", function(e) {
+            var paddle = Crafty("Paddle");
+            if (Crafty.mousePos.x > 0 && Crafty.mousePos.x < width - paddleWidth) {
+              paddle.x = Crafty.mousePos.x;
+            }
+          });
+
+        Crafty.e("Ball, 2D, Canvas, Collision, ball")
+          .attr({ x: 300, y: 300, dX: 4, dY: -4 })
+          .bind('EnterFrame', function () {
+            if (pause) {
+              return;
+            }
+
+            if (this.y <= 10) {
+              this.dY *= -1;
+            }
+
+            if (this.x <= 10 || this.x >= width-10) {
+              this.dX *= -1;
+            }
+
+            if (this.y >= height-10) {
+              remainingLives--;
+
+              Crafty("Lives").attr({ remainingLives: remainingLives });
+
+              console.log("lives", remainingLives);
+
+              if (remainingLives === 0) {
+                Crafty.enterScene("game_over");
+              } else {
+                pause = true;
+                this.x = 300;
+                this.y = 300;
+
+                setTimeout(function() {
+                  pause = false;
+                }, 1000);
+              }
+
+            }
+
+            this.x += this.dX;
+            this.y += this.dY;
+          })
+          .onHit('Paddle', function () {
+            this.dY *= -1;
+            Crafty.audio.play("bounce");
+          })
+          .onHit("Brick", function(objs) {
+            brick = objs[0].obj;
+
+            Crafty.audio.play("brickDeath");
+
+            if (this.intersect(brick.x, brick.y, brick.w, brick.h/2)) {
+              // top
+              this.dY *= -1;
+            } else if (this.intersect(brick.x, brick.y + brick.h/2, brick.w, brick.h/2)) {
+              // bottom
+              this.dY *= -1;
+            } else if (this.intersect(brick.x, brick.y, brick.w/4, brick.h)) {
+              // left
+              this.dX *= -1;
+            } else if (this.intersect(brick.x + 3*brick.w/4, brick.y, brick.w/4, brick.h)) {
+              // right
+              this.dX *= -1;
+            }
+
+            brick.destroy();
+
+            if (Crafty("Brick").length === 0) {
+              Crafty.enterScene("you_won");
+            }
+          });
+
+        Crafty.e("Lives, 2D, Canvas, Color, Text")
+          .color('white')
+          .attr({ x: width-80, y: 20, w: 200, h: 10, remainingLives: remainingLives})
+          .text("Lives")
+          .textFont({ size: "14pt" })
+          .bind('EnterFrame', function () {
+            this.text("Lives: " + this.remainingLives);
+          })
+      });
+
+      Crafty.enterScene("ping_pong");
+    </script>
+  </body>
+</html>
