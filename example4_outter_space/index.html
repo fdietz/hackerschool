@@ -14,8 +14,10 @@
       var height = 768;
       var remainingLives = 3;
       var level = 1;
-      var dX = 4;
-      var dY = -4;
+      var dX = 6;
+      var dY = -6;
+      var ballWidth = 40;
+      var ballHeight = 40;
       Crafty.init(width, height);
       Crafty.canvas.init();
 
@@ -145,7 +147,7 @@
         }
 
         Crafty.e("Paddle, 2D, Canvas, paddle")
-          .attr({ x: 200, y: height-30-1, speed: 5, direction: 1 })
+          .attr({ x: 200, y: height-25-1, speed: 5, direction: 1 })
           .bind("EnterFrame", function() {
             if (this.moving) {
               this.x = this.x + this.speed * this.direction;
@@ -174,11 +176,11 @@
               return;
             }
 
-            if (this.y <= 10) {
+            if (this.y <= 0) {
               this.dY *= -1;
             }
 
-            if (this.x <= 10 || this.x >= width-10) {
+            if (this.x <= 0 || this.x >= width-ballWidth) {
               this.dX *= -1;
             }
 
@@ -206,8 +208,21 @@
             this.x += this.dX;
             this.y += this.dY;
           })
-          .onHit('Paddle', function () {
-            this.dY *= -1;
+          .onHit('Paddle', function (objs) {
+            paddle = objs[0].obj;
+
+            if (this.intersect(paddle.x+40, paddle.y-40, paddle.w-80, 80)) {
+              this.dY *= -1;
+            } else if (this.intersect(paddle.x-40, paddle.y-40, 40, paddle.h)) {
+              // left
+              this.dX *= -1;
+              this.dY *= -1;
+            } else if (this.intersect(paddle.x + paddle.w-40, paddle.y-40, 40, paddle.h)) {
+              // right
+              this.dX *= -1;
+              this.dY *= -1;
+            }
+
             Crafty.audio.play("bounce");
           })
           .onHit("Brick", function(objs) {
