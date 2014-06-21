@@ -245,3 +245,21 @@ a {
 .cf {
   zoom:1;
 }
+
+.game-container {
+  height: 250px;
+  clear: both;
+
+  margin-bottom: 25px;
+}
+
+.game-container img {
+  float: left;
+  width: 280px;
+  height: 200px;
+  /*height: 200px;*/
+}
+
+.game-container .meta {
+  margin-left: 300px;
+}
